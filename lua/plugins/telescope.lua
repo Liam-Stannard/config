@@ -18,6 +18,16 @@ return {
             '--glob', '*.html',
             '--glob', '*.scss',
             '--glob', '!*.spec.ts',
+            '--glob', '!*.po.ts',
+            '--glob', '!*.cy.ts',
+            '--glob', '!**/node_modules/**',
+            '--glob', '!**/dist/**',
+            '--glob', '!*.js',
+            '--glob', '!*.svg',
+            '--glob', '!*.txt',
+            '--glob', '!*.md',
+            '--glob', '!*.json',
+            '--glob', '!*.sh',
           },
         })
       end,
@@ -28,7 +38,12 @@ return {
       function()
         require('telescope.builtin').live_grep({
           prompt_title = 'Grep Angular Files',
-          glob_pattern = { '*.ts', '*.html', '*.scss', '!*.spec.ts', '!*.po.ts', '!*.cy.ts' },
+          glob_pattern = {
+            '*.ts', '*.html', '*.scss',
+            '!*.spec.ts', '!*.po.ts', '!*.cy.ts',
+            '!**/node_modules/**', '!**/dist/**',
+            '!*.js', '!*.svg', '!*.txt', '!*.md', '!*.json', '!*.sh',
+          },
         })
       end,
       desc = 'Grep Angular files (no specs)',
