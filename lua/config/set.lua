@@ -36,3 +36,7 @@ opt.ignorecase = true
 opt.smartcase = true
 opt.showmatch = true
 opt.timeoutlen = 300
+
+vim.keymap.set("n", "<C-c>", function()
+  opt.relativenumber = not opt.relativenumber:get()
+end, { desc = "Toggle relative/absolute line numbers" })
