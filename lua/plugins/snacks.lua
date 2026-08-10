@@ -3,6 +3,8 @@ return {
   lazy = false,
   opts = {
     terminal = {},
+    indent = {},
+    words = {},
   },
   keys = {
     {
