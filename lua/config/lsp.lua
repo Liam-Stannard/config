@@ -24,9 +24,9 @@ local function rename_file()
 end
 
 function M.setup()
-  -- Add cmp_nvim_lsp capabilities to every server's config
+  -- Add blink.cmp capabilities to every server's config
   vim.lsp.config('*', {
-    capabilities = require('cmp_nvim_lsp').default_capabilities(),
+    capabilities = require('blink.cmp').get_lsp_capabilities(),
   })
 
   vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, { desc = 'Next diagnostic' })

@@ -4,9 +4,23 @@ return {
     { 'mason-org/mason.nvim' },
     { 'mason-org/mason-lspconfig.nvim' },
     { 'WhoIsSethDaniel/mason-tool-installer.nvim' },
-    { 'hrsh7th/nvim-cmp' },
-    { 'hrsh7th/cmp-nvim-lsp' },
-    { 'L3MON4D3/LuaSnip' },
+    {
+      'saghen/blink.cmp',
+      version = '1.*',
+      opts = {
+        keymap = {
+          preset = 'none',
+          ['<C-p>'] = { 'select_prev', 'fallback' },
+          ['<C-n>'] = { 'select_next', 'fallback' },
+          ['<CR>'] = { 'select_and_accept', 'fallback' },
+          ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+          ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
+          ['<C-d>'] = { 'scroll_documentation_down', 'fallback' },
+        },
+        completion = { documentation = { auto_show = true } },
+        signature = { enabled = true },
+      },
+    },
   },
   config = function()
     require('mason').setup({})
@@ -24,34 +38,5 @@ return {
     })
 
     require('config.lsp').setup()
-
-    -- code completion
-    local cmp = require('cmp')
-
-    cmp.setup({
-      sources = {
-        { name = 'nvim_lsp' },
-      },
-      mapping = cmp.mapping.preset.insert({
-        -- Navigate between completion items
-        ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = 'select' }),
-        ['<C-n>'] = cmp.mapping.select_next_item({ behavior = 'select' }),
-
-        -- `Enter` key to confirm completion
-        ['<CR>'] = cmp.mapping.confirm({ select = false }),
-
-        -- Ctrl+Space to trigger completion menu
-        ['<C-Space>'] = cmp.mapping.complete(),
-
-        -- Scroll up and down in the completion documentation
-        ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-d>'] = cmp.mapping.scroll_docs(4),
-      }),
-      snippet = {
-        expand = function(args)
-          require('luasnip').lsp_expand(args.body)
-        end,
-      },
-    })
   end,
 }

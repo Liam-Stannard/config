@@ -5,7 +5,6 @@ return {
       'rcarriga/nvim-dap-ui',
       dependencies = { 'nvim-neotest/nvim-nio' },
     },
-    'mxsdev/nvim-dap-vscode-js',
   },
   keys = {
     { '<leader>db', function() require('dap').toggle_breakpoint() end, desc = 'Toggle breakpoint' },
@@ -32,10 +31,21 @@ return {
       dapui.close()
     end
 
-    require('dap-vscode-js').setup({
-      debugger_path = vim.fn.stdpath('data') .. '/mason/packages/js-debug-adapter',
-      adapters = { 'pwa-node', 'pwa-chrome' },
-    })
+    -- js-debug-adapter's mason shim runs vscode-js-debug's dapDebugServer.js
+    -- directly, so it's registered as a plain TCP server adapter with no
+    -- wrapper plugin needed.
+    local js_debug_adapter = vim.fn.stdpath('data') .. '/mason/packages/js-debug-adapter/js-debug-adapter'
+    for _, adapter in ipairs({ 'pwa-node', 'pwa-chrome' }) do
+      dap.adapters[adapter] = {
+        type = 'server',
+        host = 'localhost',
+        port = '${port}',
+        executable = {
+          command = js_debug_adapter,
+          args = { '${port}' },
+        },
+      }
+    end
 
     for _, language in ipairs({ 'typescript', 'typescriptreact' }) do
       dap.configurations[language] = {
