@@ -3,6 +3,19 @@ local M = {}
 local TEST_BASE = { it = true, test = true, fit = true, xit = true }
 local DESCRIBE_BASE = { describe = true, fdescribe = true, xdescribe = true }
 
+--- @param file string
+--- @return boolean whether `file`'s basename matches one of test_glob
+function M.is_test_file(file)
+  local name = vim.fs.basename(file)
+  for _, glob in ipairs(require('jest.config').options.test_glob) do
+    local ok, lpeg_pattern = pcall(vim.glob.to_lpeg, glob)
+    if ok and lpeg_pattern:match(name) then
+      return true
+    end
+  end
+  return false
+end
+
 -- JS regex metacharacters that need escaping in literal segments.
 local SPECIAL = {}
 for c in ('.*+?^${}()|[]\\'):gmatch('.') do

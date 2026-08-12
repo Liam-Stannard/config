@@ -127,6 +127,10 @@ function M.run_file_for(file)
     notify('not a readable file: ' .. file, vim.log.levels.WARN)
     return
   end
+  if not require('jest.finder').is_test_file(file) then
+    notify('not a test file: ' .. file, vim.log.levels.WARN)
+    return
+  end
   require('jest.signs').mark_running(file)
   run({ path = file }, 'Jest: ' .. vim.fn.fnamemodify(file, ':t'))
 end
@@ -140,26 +144,28 @@ function M.run_file()
   M.run_file_for(file)
 end
 
--- mark every test file under `dir` as running, without blocking on the
--- listing before kicking off the actual jest run
-local function mark_dir_running(dir)
+-- List test files under `dir` matching test_glob (respecting node_modules
+-- exclusion); used both to gate the run on at least one test file existing
+-- and to mark them as running in the gutter, off a single rg call.
+local function find_dir_test_files(dir, on_files)
   local cmd = { 'rg', '--files' }
   for _, g in ipairs(require('jest.config').options.test_glob) do
     vim.list_extend(cmd, { '--glob', g })
   end
   vim.list_extend(cmd, { '--glob', '!**/node_modules/**', dir })
 
-  -- best-effort: if rg can't even be spawned, the run just proceeds without
-  -- a "running" indicator rather than failing the whole directory run
-  pcall(vim.system, cmd, { text = true }, function(res)
+  local ok = pcall(vim.system, cmd, { text = true }, function(res)
     vim.schedule(function()
       if res.code == 0 and res.stdout then
-        for _, f in ipairs(vim.split(res.stdout, '\n', { trimempty = true })) do
-          require('jest.signs').mark_running(vim.fn.fnamemodify(f, ':p'))
-        end
+        on_files(vim.split(res.stdout, '\n', { trimempty = true }))
+      else
+        on_files({})
       end
     end)
   end)
+  if not ok then
+    vim.schedule(function() on_files({}) end)
+  end
 end
 
 function M.run_dir_for(dir)
@@ -167,11 +173,20 @@ function M.run_dir_for(dir)
     notify('not a directory: ' .. dir, vim.log.levels.WARN)
     return
   end
-  mark_dir_running(dir)
-  run(
-    { test_path_pattern = require('jest.finder').escape_regex(dir) },
-    'Jest: ' .. vim.fn.fnamemodify(dir, ':t') .. '/'
-  )
+
+  find_dir_test_files(dir, function(files)
+    if #files == 0 then
+      notify('no test files found under ' .. dir, vim.log.levels.WARN)
+      return
+    end
+    for _, f in ipairs(files) do
+      require('jest.signs').mark_running(vim.fn.fnamemodify(f, ':p'))
+    end
+    run(
+      { test_path_pattern = require('jest.finder').escape_regex(dir) },
+      'Jest: ' .. vim.fn.fnamemodify(dir, ':t') .. '/'
+    )
+  end)
 end
 
 function M.run_dir()
@@ -192,6 +207,10 @@ function M.run_nearest()
   end
   if vim.fn.filereadable(file) == 0 then
     notify('not a readable file: ' .. file, vim.log.levels.WARN)
+    return
+  end
+  if not require('jest.finder').is_test_file(file) then
+    notify('not a test file: ' .. file, vim.log.levels.WARN)
     return
   end
   local spec, err = require('jest.finder').nearest(0)
