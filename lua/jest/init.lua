@@ -107,6 +107,10 @@ function M.setup(opts)
 end
 
 function M.run_file_for(file)
+  if vim.fn.filereadable(file) == 0 then
+    notify('not a readable file: ' .. file, vim.log.levels.WARN)
+    return
+  end
   require('jest.signs').mark_running(file)
   run({ path = file }, 'Jest: ' .. vim.fn.fnamemodify(file, ':t'))
 end
@@ -143,6 +147,10 @@ local function mark_dir_running(dir)
 end
 
 function M.run_dir_for(dir)
+  if vim.fn.isdirectory(dir) == 0 then
+    notify('not a directory: ' .. dir, vim.log.levels.WARN)
+    return
+  end
   mark_dir_running(dir)
   run(
     { test_path_pattern = require('jest.finder').escape_regex(dir) },
@@ -164,6 +172,10 @@ function M.run_nearest()
   local file = vim.api.nvim_buf_get_name(0)
   if file == '' then
     notify('current buffer has no file', vim.log.levels.WARN)
+    return
+  end
+  if vim.fn.filereadable(file) == 0 then
+    notify('not a readable file: ' .. file, vim.log.levels.WARN)
     return
   end
   local spec, err = require('jest.finder').nearest(0)
