@@ -2,7 +2,7 @@ return {
   -- local-only module (lua/jest/), not an installable plugin; `dir` just
   -- gives lazy.nvim a source so it can lazy-load on these keys.
   'jest.nvim',
-  dir = vim.fn.stdpath('config'),
+  dir = vim.fn.stdpath('config') .. '/lua/jest',
   name = 'jest.nvim',
   dependencies = {
     'nvim-telescope/telescope.nvim',

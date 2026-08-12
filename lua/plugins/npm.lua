@@ -2,7 +2,7 @@ return {
   -- local-only module (lua/npm/), not an installable plugin; `dir` just
   -- gives lazy.nvim a source so it can lazy-load on these keys.
   'npm.nvim',
-  dir = vim.fn.stdpath('config'),
+  dir = vim.fn.stdpath('config') .. '/lua/npm',
   name = 'npm.nvim',
   dependencies = {
     'nvim-telescope/telescope.nvim',
