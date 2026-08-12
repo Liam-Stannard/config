@@ -8,6 +8,7 @@ return {
     { '<leader>gb', '<cmd>Git blame<cr>', desc = 'Git blame' },
     { '<leader>gd', '<cmd>Gdiffsplit<cr>', desc = 'Git diff split' },
     { '<leader>gl', '<cmd>Git log<cr>', desc = 'Git log' },
+    { '<leader>gL', '<cmd>Git log --follow -- %<cr>', desc = 'Git log (current file)' },
     { '<leader>gw', '<cmd>Gwrite<cr>', desc = 'Git stage current file' },
     { '<leader>go', '<cmd>Gread<cr>', desc = 'Git checkout current file' },
   },

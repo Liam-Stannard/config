@@ -61,7 +61,7 @@ function M.setup()
       local client = vim.lsp.get_client_by_id(event.data.client_id)
       if client then
         if client:supports_method('textDocument/inlayHint') then
-          vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
+          vim.lsp.inlay_hint.enable(false, { bufnr = event.buf })
         end
         if client.name == 'vtsls' then
           vim.keymap.set('n', '<leader>cR', rename_file, vim.tbl_extend('force', opts, { desc = 'Rename file' }))
