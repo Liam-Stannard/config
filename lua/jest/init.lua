@@ -1,6 +1,7 @@
 local M = {}
 
 local last_run = nil -- { opts: JestRunOpts, title: string }
+local last_rows = nil -- flattened rows from the most recent run, for M.trouble()
 
 local function notify(msg, level)
   vim.notify(msg, level, { title = 'Jest' })
@@ -34,6 +35,7 @@ local function open_results(decoded, err, title)
   end
   local rows = require('jest.parser').flatten(decoded)
   fix_locations(rows)
+  last_rows = rows
   require('jest.picker').show(rows, {
     title = title,
     summary = {
@@ -56,22 +58,34 @@ function M.setup(opts)
   require('jest.config').setup(opts)
 end
 
+function M.run_file_for(file)
+  run({ path = file }, 'Jest: ' .. vim.fn.fnamemodify(file, ':t'))
+end
+
 function M.run_file()
   local file = vim.api.nvim_buf_get_name(0)
   if file == '' then
     notify('current buffer has no file', vim.log.levels.WARN)
     return
   end
-  run({ path = file }, 'Jest: ' .. vim.fn.fnamemodify(file, ':t'))
+  M.run_file_for(file)
+end
+
+function M.run_dir_for(dir)
+  run(
+    { test_path_pattern = require('jest.finder').escape_regex(dir) },
+    'Jest: ' .. vim.fn.fnamemodify(dir, ':t') .. '/'
+  )
 end
 
 function M.run_dir()
   local file = vim.api.nvim_buf_get_name(0)
   local dir = file ~= '' and vim.fn.fnamemodify(file, ':h') or vim.fn.getcwd()
-  run(
-    { test_path_pattern = require('jest.finder').escape_regex(dir) },
-    'Jest: ' .. vim.fn.fnamemodify(dir, ':t') .. '/'
-  )
+  M.run_dir_for(dir)
+end
+
+function M.pick()
+  require('jest.picker').pick()
 end
 
 function M.run_nearest()
@@ -94,6 +108,15 @@ function M.run_last()
     return
   end
   run(last_run.opts, last_run.title)
+end
+
+--- POC: view the last run's results in trouble.nvim instead of Telescope.
+function M.trouble()
+  if not last_rows then
+    notify('no results to show', vim.log.levels.WARN)
+    return
+  end
+  require('jest.picker').open_trouble(last_rows)
 end
 
 return M

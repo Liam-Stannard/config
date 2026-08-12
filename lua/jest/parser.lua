@@ -12,6 +12,7 @@ function M.flatten(decoded)
           file = file_result.name,
           fullName = a.fullName,
           title = a.title,
+          ancestorTitles = a.ancestorTitles,
           status = a.status,
           failureMessages = a.failureMessages,
           line = a.location and a.location.line or nil,

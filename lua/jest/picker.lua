@@ -29,11 +29,33 @@ local function sanitize(text)
   return (text:gsub('[\r\n\t]', ' '))
 end
 
+-- the outermost describe() is usually the file/class-under-test's name
+-- (e.g. "AuthService"), which is redundant once results are grouped by
+-- file, so drop it from the displayed/searchable name and show the
+-- remaining nested describes + title instead.
+local function short_name(row)
+  local ancestors = row.ancestorTitles
+  if not ancestors or #ancestors <= 1 then
+    return row.fullName or row.title or row.file or ''
+  end
+  local segments = {}
+  for i = 2, #ancestors do
+    table.insert(segments, ancestors[i])
+  end
+  table.insert(segments, row.title or '')
+  return table.concat(segments, ' ')
+end
+
 local function make_display(entry)
   local row = entry.value
+  if row.is_header then
+    local text = '── ' .. row.file_label .. ' ──'
+    return text, { { { 0, #text }, 'Comment' } }
+  end
+
   local icon_map = icons()
   local icon = icon_map[row.status] or '?'
-  local text = sanitize(row.fullName or row.title or row.file or '')
+  local text = sanitize(short_name(row))
   local display_str = string.format('%s %s', icon, text)
 
   local hl = STATUS_HL[row.status]
@@ -44,10 +66,17 @@ local function make_display(entry)
 end
 
 local function entry_maker(row)
+  if row.is_header then
+    return {
+      value = row,
+      display = make_display,
+      ordinal = row.file_label or '',
+    }
+  end
   return {
     value = row,
     display = make_display,
-    ordinal = sanitize(row.fullName or row.title or row.file or ''),
+    ordinal = sanitize(short_name(row)),
     filename = row.file,
     lnum = row.line,
     col = row.column,
@@ -66,6 +95,12 @@ end
 -- stripping the escape codes down to plain text.
 local function get_command(entry)
   local row = entry.value
+  if row.is_header then
+    local path = vim.fn.tempname()
+    vim.fn.writefile({ row.file_label or row.file or '' }, path)
+    return { 'cat', path }
+  end
+
   local icon_map = icons()
   local lines = {}
 
@@ -92,9 +127,40 @@ end
 function M.show(rows, opts)
   opts = opts or {}
 
+  local files = {}
+  for _, row in ipairs(rows) do
+    if row.file then
+      files[row.file] = true
+    end
+  end
+  local multi_file = vim.tbl_count(files) > 1
+
+  -- group by file, failed-first within each file
   table.sort(rows, function(a, b)
+    if a.file ~= b.file then
+      return (a.file or '') < (b.file or '')
+    end
     return status_rank(a.status) < status_rank(b.status)
   end)
+
+  -- for multi-file runs, splice in a non-interactive header row before each
+  -- new file group instead of repeating the file path on every result row
+  local display_rows = rows
+  if multi_file then
+    display_rows = {}
+    local last_file = nil
+    for _, row in ipairs(rows) do
+      if row.file ~= last_file then
+        table.insert(display_rows, {
+          is_header = true,
+          file = row.file,
+          file_label = row.file and vim.fn.fnamemodify(row.file, ':~:.') or '?',
+        })
+        last_file = row.file
+      end
+      table.insert(display_rows, row)
+    end
+  end
 
   local summary = opts.summary or {}
   local prompt_title = string.format(
@@ -109,7 +175,7 @@ function M.show(rows, opts)
     .new({}, {
       prompt_title = prompt_title,
       finder = finders.new_table({
-        results = rows,
+        results = display_rows,
         entry_maker = entry_maker,
       }),
       sorter = conf.generic_sorter({}),
@@ -136,10 +202,89 @@ function M.show(rows, opts)
         map('i', '<C-r>', rerun)
         map('n', '<C-r>', rerun)
 
+        local function open_trouble()
+          actions.close(prompt_bufnr)
+          M.open_trouble(rows)
+        end
+        map('i', '<C-t>', open_trouble)
+        map('n', '<C-t>', open_trouble)
+
         return true
       end,
     })
     :find()
+end
+
+local QF_TYPE = { failed = 'E', pending = 'W', todo = 'W', passed = 'I' }
+
+--- POC: open results in trouble.nvim's quickfix view instead of Telescope's
+--- flat list, for real collapsible-by-file grouping (`zo`/`zc`).
+--- @param rows table[] flattened jest result rows (see jest.parser.flatten)
+function M.open_trouble(rows)
+  -- trouble.nvim lazy-loads on the :Trouble command, so a bare require()
+  -- here would miss its setup()/config; ask lazy.nvim to load it first.
+  local lazy_ok, lazy = pcall(require, 'lazy')
+  if lazy_ok then
+    pcall(lazy.load, { plugins = { 'trouble.nvim' } })
+  end
+
+  local ok = pcall(require, 'trouble')
+  if not ok then
+    vim.notify('Jest: trouble.nvim not available', vim.log.levels.WARN, { title = 'Jest' })
+    return
+  end
+
+  local items = {}
+  for _, row in ipairs(rows) do
+    if not row.is_header then
+      table.insert(items, {
+        filename = row.file,
+        lnum = row.line or 1,
+        text = short_name(row),
+        type = QF_TYPE[row.status] or 'I',
+      })
+    end
+  end
+
+  vim.fn.setqflist({}, ' ', { title = 'Jest Results', items = items })
+  require('trouble').open('qflist')
+end
+
+--- Pick a test file to run (<CR>), or run its containing directory (<C-d>),
+--- rather than always acting on the current buffer.
+function M.pick()
+  local test_glob = require('jest.config').options.test_glob
+  local find_command = { 'rg', '--files' }
+  for _, g in ipairs(test_glob) do
+    vim.list_extend(find_command, { '--glob', g })
+  end
+  vim.list_extend(find_command, { '--glob', '!**/node_modules/**' })
+
+  require('telescope.builtin').find_files({
+    prompt_title = 'Jest: pick file (<CR> run file, <C-d> run directory)',
+    find_command = find_command,
+    attach_mappings = function(prompt_bufnr, map)
+      local function run_selected(as_dir)
+        local entry = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        if not entry then
+          return
+        end
+        local path = entry.path
+        if as_dir then
+          require('jest').run_dir_for(vim.fn.fnamemodify(path, ':h'))
+        else
+          require('jest').run_file_for(path)
+        end
+      end
+
+      actions.select_default:replace(function() run_selected(false) end)
+      map('i', '<C-d>', function() run_selected(true) end)
+      map('n', '<C-d>', function() run_selected(true) end)
+
+      return true
+    end,
+  })
 end
 
 return M
