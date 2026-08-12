@@ -10,17 +10,33 @@ end
 
 -- jest's --testLocationInResults reports lines against transformed source
 -- (e.g. under ts-jest), not the original file, so prefer our own
--- treesitter-derived locations for literal (non-.each) tests when available.
+-- treesitter-derived locations when available: an exact match for literal
+-- tests, or a regex match against .each-generated fullNames.
 local function fix_locations(rows)
-  local lines_by_file = {}
+  local locations_by_file = {}
   for _, row in ipairs(rows) do
     if row.file and row.fullName then
-      local lines = lines_by_file[row.file]
-      if lines == nil then
-        lines = require('jest.finder').file_test_lines(row.file)
-        lines_by_file[row.file] = lines
+      local locations = locations_by_file[row.file]
+      if locations == nil then
+        local literal, each = require('jest.finder').file_locations(row.file)
+        locations = { literal = literal, each = each }
+        locations_by_file[row.file] = locations
       end
-      local line = lines[row.fullName]
+
+      local line = locations.literal[row.fullName]
+      if not line then
+        for _, e in ipairs(locations.each) do
+          -- our patterns are JS-regex-escaped (for jest's --testNamePattern);
+          -- \v makes vim's regex engine use matching (non-inverted) escaping
+          -- rules.
+          local re_ok, re = pcall(vim.regex, '\\v' .. e.pattern)
+          if re_ok and re:match_str(row.fullName) then
+            line = e.line
+            break
+          end
+        end
+      end
+
       if line then
         row.line = line
         row.column = nil

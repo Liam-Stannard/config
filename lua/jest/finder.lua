@@ -271,20 +271,24 @@ end
 
 --- jest's `--testLocationInResults` reports locations against the
 --- transformed/compiled source (e.g. under ts-jest), not the original file,
---- so it's unreliable for jump-to-source. Map each *literal* (non-.each)
---- test's exact fullName to its real source line instead. .each-generated
---- fullNames aren't covered here since their titles are runtime-interpolated
---- and can't be derived statically.
+--- so it's unreliable for jump-to-source. Map every test's real source line
+--- instead: literal tests get an exact fullName key; .each-generated tests
+--- get a --testNamePattern-style regex to match a result row's fullName
+--- against, since their titles are runtime-interpolated and can't be known
+--- statically.
 --- @param filepath string
---- @return table<string, integer>
-function M.file_test_lines(filepath)
-  local locations = {}
+--- @return table<string, integer> literal fullName -> line
+--- @return table[] each { pattern: string, line: integer }
+function M.file_locations(filepath)
+  local literal, each = {}, {}
   for _, t in ipairs(M.file_all_tests(filepath)) do
     if t.kind == 'literal' then
-      locations[t.fullName] = t.line
+      literal[t.fullName] = t.line
+    else
+      table.insert(each, { pattern = t.pattern, line = t.line })
     end
   end
-  return locations
+  return literal, each
 end
 
 return M
