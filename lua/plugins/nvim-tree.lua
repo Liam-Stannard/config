@@ -6,7 +6,9 @@ return {
     "nvim-tree/nvim-web-devicons",
   },
   config = function()
-    require("nvim-tree").setup {}
+    require("nvim-tree").setup {
+      hijack_directories = { auto_open = false },
+    }
 
     local api = require("nvim-tree.api")
     local opts = { noremap = true, silent = true }
