@@ -36,6 +36,13 @@ M.defaults = {
     last = '<leader>nl',
     stop = '<leader>nx',
     toggle_output = '<leader>no',
+
+    -- bind specific npm-scripts entries directly to a key, e.g.
+    -- { lint = '<leader>nl' } runs `npm run lint` (last one wins if it
+    -- collides with another keymap above, same as any vim.keymap.set).
+    -- Resolved against whichever project the buffer under the cursor
+    -- belongs to at press-time, not the project active when Neovim started.
+    scripts = {},
   },
 }
 

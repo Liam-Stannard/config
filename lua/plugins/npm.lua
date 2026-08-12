@@ -27,6 +27,10 @@ return {
     map(km.stop, function() npm.stop() end, 'Npm: stop last script')
     map(km.toggle_output, npm.toggle_output, 'Npm: toggle output window')
 
+    for script, lhs in pairs(km.scripts or {}) do
+      map(lhs, function() npm.run(script) end, 'Npm: run ' .. script)
+    end
+
     local function complete_scripts()
       local file = vim.api.nvim_buf_get_name(0)
       local root = require('npm.root').find_root(file ~= '' and file or nil)
