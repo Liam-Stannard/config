@@ -96,7 +96,7 @@ function M.show(rows, opts)
   )
 
   pickers
-    .new({}, {
+    .new(require('jest.config').options.picker.layout, {
       prompt_title = prompt_title,
       finder = finders.new_table({
         results = display_rows,

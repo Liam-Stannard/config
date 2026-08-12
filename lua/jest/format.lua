@@ -27,6 +27,14 @@ function M.worse(a, b)
   return M.status_rank(a) <= M.status_rank(b) and a or b
 end
 
+--- Strip ANSI escape codes, e.g. for a failure message shown in a plain-text
+--- UI (vim.diagnostic) rather than a real terminal buffer.
+--- @param text string
+--- @return string
+function M.strip_ansi(text)
+  return (text:gsub('\27%[[0-9;]*m', ''))
+end
+
 -- jest test titles can embed arbitrary interpolated values (e.g. `it.each`
 -- with a `$value` of `'a\n'`), including raw control characters. A literal
 -- newline breaks line-based UIs that assume one buffer line per entry

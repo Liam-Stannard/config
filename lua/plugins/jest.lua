@@ -8,26 +8,37 @@ return {
     'nvim-telescope/telescope.nvim',
     'nvim-treesitter/nvim-treesitter',
   },
-  keys = {
-    { '<leader>tf', function() require('jest').run_file() end, desc = 'Jest: run file' },
-    { '<leader>td', function() require('jest').run_dir() end, desc = 'Jest: run directory' },
-    { '<leader>tn', function() require('jest').run_nearest() end, desc = 'Jest: run nearest test' },
-    { '<leader>tl', function() require('jest').run_last() end, desc = 'Jest: rerun last' },
-    { '<leader>to', function() require('jest').reopen() end, desc = 'Jest: reopen last results' },
-    { '<leader>tp', function() require('jest').pick() end, desc = 'Jest: pick file/directory' },
-    { '<leader>tt', function() require('jest').trouble() end, desc = 'Jest: last results in Trouble' },
-    { '<leader>ts', function() require('jest').toggle_summary() end, desc = 'Jest: toggle summary window' },
-  },
+  -- keymaps are user-configurable (jest.config.options.keymaps), so they
+  -- can't be declared statically here for lazy.nvim's `keys` trigger; load
+  -- eagerly-ish instead, same as which-key.lua.
+  event = 'VeryLazy',
   config = function()
     require('jest').setup({})
+    local jest = require('jest')
+    local km = require('jest.config').options.keymaps
 
-    vim.api.nvim_create_user_command('JestFile', function() require('jest').run_file() end, {})
-    vim.api.nvim_create_user_command('JestDir', function() require('jest').run_dir() end, {})
-    vim.api.nvim_create_user_command('JestNearest', function() require('jest').run_nearest() end, {})
-    vim.api.nvim_create_user_command('JestLast', function() require('jest').run_last() end, {})
-    vim.api.nvim_create_user_command('JestReopen', function() require('jest').reopen() end, {})
-    vim.api.nvim_create_user_command('JestPick', function() require('jest').pick() end, {})
-    vim.api.nvim_create_user_command('JestTrouble', function() require('jest').trouble() end, {})
-    vim.api.nvim_create_user_command('JestSummary', function() require('jest').toggle_summary() end, {})
+    local function map(lhs, fn, desc)
+      if lhs then
+        vim.keymap.set('n', lhs, fn, { desc = desc })
+      end
+    end
+
+    map(km.run_file, jest.run_file, 'Jest: run file')
+    map(km.run_dir, jest.run_dir, 'Jest: run directory')
+    map(km.run_nearest, jest.run_nearest, 'Jest: run nearest test')
+    map(km.run_last, jest.run_last, 'Jest: rerun last')
+    map(km.reopen, jest.reopen, 'Jest: reopen last results')
+    map(km.pick, jest.pick, 'Jest: pick file/directory')
+    map(km.trouble, jest.trouble, 'Jest: last results in Trouble')
+    map(km.toggle_summary, jest.toggle_summary, 'Jest: toggle summary window')
+
+    vim.api.nvim_create_user_command('JestFile', jest.run_file, {})
+    vim.api.nvim_create_user_command('JestDir', jest.run_dir, {})
+    vim.api.nvim_create_user_command('JestNearest', jest.run_nearest, {})
+    vim.api.nvim_create_user_command('JestLast', jest.run_last, {})
+    vim.api.nvim_create_user_command('JestReopen', jest.reopen, {})
+    vim.api.nvim_create_user_command('JestPick', jest.pick, {})
+    vim.api.nvim_create_user_command('JestTrouble', jest.trouble, {})
+    vim.api.nvim_create_user_command('JestSummary', jest.toggle_summary, {})
   end,
 }

@@ -48,7 +48,9 @@ end
 
 local function open_results(decoded, err, title)
   if err then
-    notify(err, vim.log.levels.ERROR)
+    if require('jest.config').options.notify.on_error then
+      notify(err, vim.log.levels.ERROR)
+    end
     return
   end
   local rows = require('jest.parser').flatten(decoded)
@@ -60,13 +62,40 @@ local function open_results(decoded, err, title)
     failed = decoded.numFailedTests,
     total = decoded.numTotalTests,
   }
-  require('jest.summary').render(rows, { title = title, summary = last_summary })
-  require('jest.picker').show(rows, { title = title, summary = last_summary })
+
+  local cfg = require('jest.config').options
+  local display_opts = { title = title, summary = last_summary }
+
+  local summary_auto = cfg.summary.auto_open
+  require('jest.summary').render(rows, display_opts)
+  if summary_auto == 'on_complete' or summary_auto == 'always' then
+    if not require('jest.summary').is_open() then
+      require('jest.summary').open()
+    end
+  end
+
+  local open_picker = cfg.picker.auto_open == 'always'
+    or (cfg.picker.auto_open == 'on_failure' and (last_summary.failed or 0) > 0)
+  if open_picker then
+    require('jest.picker').show(rows, display_opts)
+  end
 end
 
 local function run(opts, title)
   last_run = { opts = opts, title = title }
-  notify('Running: ' .. title)
+
+  local cfg = require('jest.config').options
+  if cfg.notify.on_start then
+    notify('Running: ' .. title)
+  end
+
+  local summary_auto = cfg.summary.auto_open
+  if summary_auto == 'on_start' or summary_auto == 'always' then
+    if not require('jest.summary').is_open() then
+      require('jest.summary').open()
+    end
+  end
+
   require('jest.runner').run(opts, function(decoded, err)
     open_results(decoded, err, title)
   end)

@@ -2,7 +2,9 @@ local uv = vim.uv or vim.loop
 
 local M = {}
 
---- Find the nearest package.json directory upward from `path`.
+--- Find the project root for `path`: a user-supplied root_dir() function
+--- takes precedence when it returns a value, otherwise walk upward looking
+--- for root_pattern (default "package.json").
 --- @param path string|nil file path to start searching from (defaults to current buffer)
 --- @return string root directory
 function M.find_root(path)
@@ -10,8 +12,17 @@ function M.find_root(path)
   if path == '' then
     return vim.fn.getcwd()
   end
+
+  local config = require('jest.config').options
+  if config.root_dir then
+    local ok, dir = pcall(config.root_dir, path)
+    if ok and dir then
+      return dir
+    end
+  end
+
   local dir = vim.fs.dirname(path)
-  local found = vim.fs.find('package.json', { path = dir, upward = true })[1]
+  local found = vim.fs.find(config.root_pattern or 'package.json', { path = dir, upward = true })[1]
   if not found then
     return vim.fn.getcwd()
   end
