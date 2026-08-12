@@ -1,25 +1,11 @@
+local format = require('jest.format')
+
 local M = {}
 
 local ns = vim.api.nvim_create_namespace('jest_signs')
 
 --- M.cache[file][line] = status ('running'|'passed'|'failed'|'pending'|'todo')
 M.cache = {}
-
-local STATUS_HL = {
-  passed = 'DiagnosticOk',
-  failed = 'DiagnosticError',
-  pending = 'DiagnosticWarn',
-  todo = 'DiagnosticWarn',
-  running = 'DiagnosticInfo',
-}
-
--- lower rank wins when aggregating multiple .each cases onto one source line
-local STATUS_RANK = { failed = 0, running = 1, pending = 2, todo = 2, passed = 3 }
-
-local function worse(a, b)
-  local ra, rb = STATUS_RANK[a] or 4, STATUS_RANK[b] or 4
-  return ra <= rb and a or b
-end
 
 local function loaded_bufnr(file)
   local bufnr = vim.fn.bufnr(file)
@@ -50,7 +36,7 @@ function M.render(file)
     if line >= 1 and line <= line_count then
       pcall(vim.api.nvim_buf_set_extmark, bufnr, ns, line - 1, 0, {
         sign_text = icons[status] or '?',
-        sign_hl_group = STATUS_HL[status] or 'Comment',
+        sign_hl_group = format.STATUS_HL[status] or 'Comment',
       })
     end
   end
@@ -109,7 +95,7 @@ function M.update(file, rows)
         local status = nil
         for _, row in ipairs(rows) do
           if row.fullName and re:match_str(row.fullName) then
-            status = status and worse(status, row.status) or row.status
+            status = status and format.worse(status, row.status) or row.status
           end
         end
         if status then

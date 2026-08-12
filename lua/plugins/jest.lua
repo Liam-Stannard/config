@@ -16,6 +16,7 @@ return {
     { '<leader>to', function() require('jest').reopen() end, desc = 'Jest: reopen last results' },
     { '<leader>tp', function() require('jest').pick() end, desc = 'Jest: pick file/directory' },
     { '<leader>tt', function() require('jest').trouble() end, desc = 'Jest: last results in Trouble' },
+    { '<leader>ts', function() require('jest').toggle_summary() end, desc = 'Jest: toggle summary window' },
   },
   config = function()
     require('jest').setup({})
@@ -27,5 +28,6 @@ return {
     vim.api.nvim_create_user_command('JestReopen', function() require('jest').reopen() end, {})
     vim.api.nvim_create_user_command('JestPick', function() require('jest').pick() end, {})
     vim.api.nvim_create_user_command('JestTrouble', function() require('jest').trouble() end, {})
+    vim.api.nvim_create_user_command('JestSummary', function() require('jest').toggle_summary() end, {})
   end,
 }

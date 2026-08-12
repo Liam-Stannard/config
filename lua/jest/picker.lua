@@ -5,60 +5,23 @@ local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
 local previewers = require('telescope.previewers')
 
+local format = require('jest.format')
+
 local M = {}
 
 local function icons()
   return require('jest.config').options.icons
 end
 
--- highlight groups are core Neovim diagnostic groups, so they follow
--- whatever colorscheme is active rather than hardcoding colors.
-local STATUS_HL = {
-  passed = 'DiagnosticOk',
-  failed = 'DiagnosticError',
-  pending = 'DiagnosticWarn',
-  todo = 'DiagnosticWarn',
-}
-
--- jest test titles can embed arbitrary interpolated values (e.g. `it.each`
--- with a `$value` of `'a\n'`), including raw control characters. A literal
--- newline in a result's display text breaks Telescope's results buffer,
--- which assumes exactly one buffer line per entry, so collapse them before
--- ever handing text to Telescope.
-local function sanitize(text)
-  return (text:gsub('[\r\n\t]', ' '))
-end
-
--- the outermost describe() is usually the file/class-under-test's name
--- (e.g. "AuthService"), which is redundant once results are grouped by
--- file, so drop it from the displayed/searchable name and show the
--- remaining nested describes + title instead.
-local function short_name(row)
-  local ancestors = row.ancestorTitles
-  if not ancestors or #ancestors <= 1 then
-    return row.fullName or row.title or row.file or ''
-  end
-  local segments = {}
-  for i = 2, #ancestors do
-    table.insert(segments, ancestors[i])
-  end
-  table.insert(segments, row.title or '')
-  return table.concat(segments, ' ')
-end
-
 local function make_display(entry)
   local row = entry.value
-  if row.is_header then
-    local text = '── ' .. row.file_label .. ' ──'
+  local icon, text = format.label(row, icons())
+  if not icon then
     return text, { { { 0, #text }, 'Comment' } }
   end
 
-  local icon_map = icons()
-  local icon = icon_map[row.status] or '?'
-  local text = sanitize(short_name(row))
   local display_str = string.format('%s %s', icon, text)
-
-  local hl = STATUS_HL[row.status]
+  local hl = format.STATUS_HL[row.status]
   if hl then
     return display_str, { { { 0, #icon }, hl } }
   end
@@ -76,17 +39,11 @@ local function entry_maker(row)
   return {
     value = row,
     display = make_display,
-    ordinal = sanitize(short_name(row)),
+    ordinal = format.sanitize(format.short_name(row)),
     filename = row.file,
     lnum = row.line,
     col = row.column,
   }
-end
-
-local STATUS_RANK = { failed = 0, pending = 1, todo = 1, passed = 2 }
-
-local function status_rank(status)
-  return STATUS_RANK[status] or 3
 end
 
 -- jest emits ANSI-colored failure/diff output (see runner.lua's --colors
@@ -127,40 +84,7 @@ end
 function M.show(rows, opts)
   opts = opts or {}
 
-  local files = {}
-  for _, row in ipairs(rows) do
-    if row.file then
-      files[row.file] = true
-    end
-  end
-  local multi_file = vim.tbl_count(files) > 1
-
-  -- group by file, failed-first within each file
-  table.sort(rows, function(a, b)
-    if a.file ~= b.file then
-      return (a.file or '') < (b.file or '')
-    end
-    return status_rank(a.status) < status_rank(b.status)
-  end)
-
-  -- for multi-file runs, splice in a non-interactive header row before each
-  -- new file group instead of repeating the file path on every result row
-  local display_rows = rows
-  if multi_file then
-    display_rows = {}
-    local last_file = nil
-    for _, row in ipairs(rows) do
-      if row.file ~= last_file then
-        table.insert(display_rows, {
-          is_header = true,
-          file = row.file,
-          file_label = row.file and vim.fn.fnamemodify(row.file, ':~:.') or '?',
-        })
-        last_file = row.file
-      end
-      table.insert(display_rows, row)
-    end
-  end
+  local display_rows = format.group(rows)
 
   local summary = opts.summary or {}
   local prompt_title = string.format(
@@ -240,7 +164,7 @@ function M.open_trouble(rows)
       table.insert(items, {
         filename = row.file,
         lnum = row.line or 1,
-        text = short_name(row),
+        text = format.short_name(row),
         type = QF_TYPE[row.status] or 'I',
       })
     end

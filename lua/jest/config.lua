@@ -12,6 +12,8 @@ M.defaults = {
   },
   -- gutter icons showing each test's last-known status while reviewing a file
   signs = { enabled = true },
+  -- persistent results panel; position is 'left'|'right'|'top'|'bottom'
+  summary = { position = 'right', width = 60, height = 15 },
 }
 
 M.options = vim.deepcopy(M.defaults)

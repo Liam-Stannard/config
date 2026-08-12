@@ -60,6 +60,7 @@ local function open_results(decoded, err, title)
     failed = decoded.numFailedTests,
     total = decoded.numTotalTests,
   }
+  require('jest.summary').render(rows, { title = title, summary = last_summary })
   require('jest.picker').show(rows, { title = title, summary = last_summary })
 end
 
@@ -162,6 +163,11 @@ function M.run_last()
     end
   end
   run(last_run.opts, last_run.title)
+end
+
+--- Toggle a persistent, dockable panel showing the last run's results.
+function M.toggle_summary()
+  require('jest.summary').toggle()
 end
 
 --- Reopen the last run's results in the Telescope picker without rerunning.
