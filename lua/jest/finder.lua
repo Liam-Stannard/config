@@ -176,34 +176,42 @@ local EXT_LANG = {
   tsx = 'tsx',
 }
 
---- jest's `--testLocationInResults` reports locations against the
---- transformed/compiled source (e.g. under ts-jest), not the original file,
---- so it's unreliable for jump-to-source. Walk the file ourselves and map
---- each *literal* (non-.each) test's exact fullName to its real source line.
---- .each-generated fullNames aren't covered here since their titles are
---- runtime-interpolated and can't be derived statically.
 --- @param filepath string
---- @return table<string, integer>
-function M.file_test_lines(filepath)
+--- @return TSNode|nil root
+--- @return string|nil source
+local function parse_file(filepath)
   local ext = filepath:match('%.([%w]+)$')
   local lang = ext and EXT_LANG[ext]
   if not lang then
-    return {}
+    return nil, nil
   end
 
   local read_ok, lines = pcall(vim.fn.readfile, filepath)
   if not read_ok then
-    return {}
+    return nil, nil
   end
   local source = table.concat(lines, '\n')
 
   local parse_ok, parser = pcall(vim.treesitter.get_string_parser, source, lang)
   if not parse_ok or not parser then
+    return nil, nil
+  end
+  return parser:parse()[1]:root(), source
+end
+
+--- Walk the whole file once, returning every test call site (literal and
+--- .each alike). Literal tests get their exact fullName; .each tests get a
+--- --testNamePattern-style regex, since their titles are runtime-interpolated
+--- and can't be known statically.
+--- @param filepath string
+--- @return table[] { line, kind = 'literal'|'each', fullName?, pattern? }
+function M.file_all_tests(filepath)
+  local root, source = parse_file(filepath)
+  if not root then
     return {}
   end
-  local root = parser:parse()[1]:root()
 
-  local locations = {}
+  local tests = {}
 
   local function visit(node, ancestors)
     if node:type() == 'call_expression' then
@@ -212,18 +220,36 @@ function M.file_test_lines(filepath)
         local base, modifier = call_target(fn, source)
         if base then
           local title = first_string_title(node, source)
-          if title and modifier ~= 'each' then
+          if title then
+            local is_each = modifier == 'each'
+            local start_row = select(1, node:range())
             if TEST_BASE[base] then
-              local segments = {}
-              for _, t in ipairs(ancestors) do
-                table.insert(segments, t)
+              if is_each then
+                local segments = {}
+                for _, a in ipairs(ancestors) do
+                  table.insert(segments, a.is_each and each_title_to_pattern(a.title) or escape_regex(a.title))
+                end
+                table.insert(segments, each_title_to_pattern(title))
+                table.insert(tests, {
+                  line = start_row + 1,
+                  kind = 'each',
+                  pattern = '^' .. table.concat(segments, ' ') .. '$',
+                })
+              else
+                local segments = {}
+                for _, a in ipairs(ancestors) do
+                  table.insert(segments, a.title)
+                end
+                table.insert(segments, title)
+                table.insert(tests, {
+                  line = start_row + 1,
+                  kind = 'literal',
+                  fullName = table.concat(segments, ' '),
+                })
               end
-              table.insert(segments, title)
-              local start_row = select(1, node:range())
-              locations[table.concat(segments, ' ')] = start_row + 1
               return -- don't descend into a matched test's own body
             elseif DESCRIBE_BASE[base] then
-              table.insert(ancestors, title)
+              table.insert(ancestors, { title = title, is_each = is_each })
               for child in node:iter_children() do
                 visit(child, ancestors)
               end
@@ -240,6 +266,24 @@ function M.file_test_lines(filepath)
   end
 
   visit(root, {})
+  return tests
+end
+
+--- jest's `--testLocationInResults` reports locations against the
+--- transformed/compiled source (e.g. under ts-jest), not the original file,
+--- so it's unreliable for jump-to-source. Map each *literal* (non-.each)
+--- test's exact fullName to its real source line instead. .each-generated
+--- fullNames aren't covered here since their titles are runtime-interpolated
+--- and can't be derived statically.
+--- @param filepath string
+--- @return table<string, integer>
+function M.file_test_lines(filepath)
+  local locations = {}
+  for _, t in ipairs(M.file_all_tests(filepath)) do
+    if t.kind == 'literal' then
+      locations[t.fullName] = t.line
+    end
+  end
   return locations
 end
 

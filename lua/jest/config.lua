@@ -4,12 +4,14 @@ M.defaults = {
   -- override jest command entirely, e.g. { 'yarn', 'jest' }
   jest_cmd = nil,
   extra_args = {},
-  icons = { passed = '✓', failed = '✗', pending = '○', todo = '◌' },
+  icons = { passed = '✓', failed = '✗', pending = '○', todo = '◌', running = '●' },
   -- rg --glob patterns used by jest.pick() to find test files
   test_glob = {
     '*.spec.ts', '*.spec.tsx', '*.spec.js', '*.spec.jsx',
     '*.test.ts', '*.test.tsx', '*.test.js', '*.test.jsx',
   },
+  -- gutter icons showing each test's last-known status while reviewing a file
+  signs = { enabled = true },
 }
 
 M.options = vim.deepcopy(M.defaults)

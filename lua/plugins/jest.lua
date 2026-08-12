@@ -13,6 +13,7 @@ return {
     { '<leader>td', function() require('jest').run_dir() end, desc = 'Jest: run directory' },
     { '<leader>tn', function() require('jest').run_nearest() end, desc = 'Jest: run nearest test' },
     { '<leader>tl', function() require('jest').run_last() end, desc = 'Jest: rerun last' },
+    { '<leader>to', function() require('jest').reopen() end, desc = 'Jest: reopen last results' },
     { '<leader>tp', function() require('jest').pick() end, desc = 'Jest: pick file/directory' },
     { '<leader>tt', function() require('jest').trouble() end, desc = 'Jest: last results in Trouble' },
   },
@@ -23,6 +24,7 @@ return {
     vim.api.nvim_create_user_command('JestDir', function() require('jest').run_dir() end, {})
     vim.api.nvim_create_user_command('JestNearest', function() require('jest').run_nearest() end, {})
     vim.api.nvim_create_user_command('JestLast', function() require('jest').run_last() end, {})
+    vim.api.nvim_create_user_command('JestReopen', function() require('jest').reopen() end, {})
     vim.api.nvim_create_user_command('JestPick', function() require('jest').pick() end, {})
     vim.api.nvim_create_user_command('JestTrouble', function() require('jest').trouble() end, {})
   end,
