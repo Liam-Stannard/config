@@ -1,13 +1,6 @@
 return {
 	"nvim-telescope/telescope.nvim",
 	dependencies = { "nvim-lua/plenary.nvim" },
-	defaults = {
-		preview = {
-			treesitter = {
-				disable = { "markdown" },
-			},
-		},
-	},
 	keys = {
 		{
 			"<leader>ff",
