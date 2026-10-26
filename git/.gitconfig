@@ -1,0 +1,40 @@
+[alias]
+  s = status
+  ss = status -s
+  si = status --ignored
+  t = tag -l -n1
+  b = branch -vv --color
+  d = diff --color
+  dd = diff --color -w
+  dc = diff HEAD~ --color 
+  ddc = HEAD~ --color -w 
+  p = pull 
+  pr = pull --rebase
+  co = checkout 
+  c = commit
+  ca = comit --amend
+  cnv = commit --no-verify
+  canv = commit --no-verify
+  sh = show --pretty= --name-status
+  st = stash
+  stiu = stash --include-untracked
+  sp = stash pop
+  sa = stash apply
+  sl = stash list
+
+[core]
+  pager = more
+  editor = nvim
+
+[diff]
+  tool = nvimdiff
+
+[credentia]
+  helper = cache --timeout=86400
+
+[difftool "nvimdiff"]
+  cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
+
+[difftool]
+  prompt = false
+  tool = nvimdiff
