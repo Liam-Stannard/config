@@ -7,14 +7,14 @@
   d = diff --color
   dd = diff --color -w
   dc = diff HEAD~ --color 
-  ddc = HEAD~ --color -w 
+  ddc = diff HEAD~ --color -w
   p = pull 
   pr = pull --rebase
   co = checkout 
   c = commit
-  ca = comit --amend
+  ca = commit --amend
   cnv = commit --no-verify
-  canv = commit --no-verify
+  canv = commit --amend --no-verify
   sh = show --pretty= --name-status
   st = stash
   stiu = stash --include-untracked
@@ -29,7 +29,7 @@
 [diff]
   tool = nvimdiff
 
-[credentia]
+[credential]
   helper = cache --timeout=86400
 
 [difftool "nvimdiff"]
@@ -38,3 +38,7 @@
 [difftool]
   prompt = false
   tool = nvimdiff
+
+# Name and email live outside the repo
+[include]
+  path = ~/.gitconfig.local
