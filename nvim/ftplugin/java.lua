@@ -6,15 +6,53 @@ local jdtls = require('jdtls')
 local mason_path = vim.fn.stdpath('data') .. '/mason/packages'
 local jdtls_path = mason_path .. '/jdtls'
 
--- No JDK is on $PATH. jdtls itself requires a JavaSE-21 runtime to launch
--- (bundled Eclipse plugins won't resolve on anything older) — reuse the JBR
--- that ships with the local IntelliJ install rather than provisioning a
--- separate JDK just to boot the server.
-local runner_java_home = '/snap/intellij-idea-community/current/jbr'
+-- Java paths are set per machine through environment variables, so nothing
+-- machine-specific lives in this repo.
+--
+-- Installed /usr/lib/jvm/java-<N>-openjdk JDKs, oldest first.
+local function system_jdks()
+  local jdks = {}
+  for _, path in ipairs(vim.fn.glob('/usr/lib/jvm/java-*-openjdk', false, true)) do
+    local version = tonumber(path:match('java%-(%d+)%-openjdk$'))
+    if version then
+      table.insert(jdks, { version = version, path = path })
+    end
+  end
+  table.sort(jdks, function(a, b) return a.version < b.version end)
+  return jdks
+end
 
--- JDK used to compile/run this project (sourceCompatibility 17), registered
--- below as the JavaSE-17 execution environment.
-local project_java_home = vim.fn.expand('~/.jdks/corretto-19.0.2')
+-- JDTLS_JAVA_HOME: JDK used to run jdtls itself. Recent jdtls releases need
+--   Java 25 or newer. Defaults to the newest installed JDK, then $JAVA_HOME.
+local function default_runner()
+  local jdks = system_jdks()
+  return jdks[#jdks] and jdks[#jdks].path or vim.env.JAVA_HOME or '/usr/lib/jvm/default'
+end
+local runner_java_home = vim.env.JDTLS_JAVA_HOME or default_runner()
+if vim.fn.executable(runner_java_home .. '/bin/java') == 0 then
+  vim.notify('jdtls: no java at ' .. runner_java_home .. '/bin/java (set JDTLS_JAVA_HOME)', vim.log.levels.WARN)
+  return
+end
+
+-- JDTLS_RUNTIMES: JDKs that projects can build against, as
+--   "JavaSE-17=/path/to/jdk17,JavaSE-21=/path/to/jdk21".
+--   Defaults to every /usr/lib/jvm/java-<N>-openjdk that is installed.
+local function java_runtimes()
+  local runtimes = {}
+  if vim.env.JDTLS_RUNTIMES and vim.env.JDTLS_RUNTIMES ~= '' then
+    for entry in vim.gsplit(vim.env.JDTLS_RUNTIMES, ',', { trimempty = true }) do
+      local name, path = entry:match('^%s*(.-)%s*=%s*(.-)%s*$')
+      if name and path then
+        table.insert(runtimes, { name = name, path = vim.fn.expand(path) })
+      end
+    end
+    return runtimes
+  end
+  for _, jdk in ipairs(system_jdks()) do
+    table.insert(runtimes, { name = 'JavaSE-' .. jdk.version, path = jdk.path })
+  end
+  return runtimes
+end
 
 local root_dir = jdtls.setup.find_root({ 'build.gradle', 'settings.gradle', 'pom.xml', '.git' })
 if not root_dir then
@@ -53,9 +91,7 @@ require('jdtls').start_or_attach({
   settings = {
     java = {
       configuration = {
-        runtimes = {
-          { name = 'JavaSE-17', path = project_java_home },
-        },
+        runtimes = java_runtimes(),
         updateBuildConfiguration = 'interactive',
       },
       eclipse = { downloadSources = true },
