@@ -30,8 +30,8 @@ opt.expandtab = true
 
 opt.hidden = true
 opt.ttyfast = true
-opt.laststatus = 2
-opt.showmode = true
+opt.laststatus = 3 -- single global statusline (lualine)
+opt.showmode = false -- lualine shows the mode
 opt.showcmd = true
 
 opt.hlsearch = true
