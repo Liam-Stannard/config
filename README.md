@@ -26,7 +26,7 @@ Install everything below in one go:
 
 ```fish
 sudo pacman -S --needed neovim git ripgrep fd tree-sitter-cli nodejs npm \
-    unzip gcc make jdk-openjdk rustup glow ttf-jetbrains-mono-nerd kitty
+    unzip gcc make jdk-openjdk rustup glow ttf-jetbrains-mono-nerd noto-fonts kitty
 rustup default stable
 rustup component add rustfmt rust-src
 npm i -g @agentclientprotocol/claude-agent-acp
@@ -113,9 +113,9 @@ Run `:checkhealth` after the first start to confirm everything is found.
 | Needed for | Package |
 | --- | --- |
 | Terminal | `kitty` |
-| Font (`font_family JetBrainsMono Nerd Font`) | `ttf-jetbrains-mono-nerd` |
+| Font (`font_family Noto Sans Mono`, 10.5pt, matching VS Code) | `noto-fonts` |
 
-The Nerd Font also provides the icon on the active tab and the icons in nvim. Without it, kitty falls back to another font and icons show as boxes.
+Without `noto-fonts`, kitty quietly falls back to another monospace font, so text looks different. kitty has Nerd Font icons built in, so the tab and nvim icons render with Noto too. To go back to JetBrainsMono, set `font_family JetBrainsMono Nerd Font` and `font_size 10.0` in `kitty.conf` (needs `ttf-jetbrains-mono-nerd`).
 
 Colours come from `nord.conf` (Nord, matching nvim). For VS Code Dark Modern instead, change the `include` at the top of `kitty.conf` to `vscode-dark.conf`.
 
