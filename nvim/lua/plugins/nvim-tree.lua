@@ -11,6 +11,9 @@ return {
 				width = 80,
 				number = true,
 				relativenumber = true, -- jump to a file with e.g. 5j
+				-- don't run `wincmd =` when the tree restores its width, which
+				-- resized every other window (e.g. when agentic opens a diff)
+				preserve_window_proportions = true,
 			},
 			renderer = {
 				root_folder_label = false,
