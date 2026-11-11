@@ -14,6 +14,18 @@ return {
     { '<leader>dO', function() require('dap').step_out() end, desc = 'Step out' },
     { '<leader>dt', function() require('dap').terminate() end, desc = 'Terminate' },
     { '<leader>du', function() require('dapui').toggle() end, desc = 'Toggle DAP UI' },
+    {
+      '<leader>dB',
+      function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end,
+      desc = 'Conditional breakpoint',
+    },
+    -- VS Code debug keys
+    { '<F5>', function() require('dap').continue() end, desc = 'Debug: continue' },
+    { '<F9>', function() require('dap').toggle_breakpoint() end, desc = 'Debug: toggle breakpoint' },
+    { '<F10>', function() require('dap').step_over() end, desc = 'Debug: step over' },
+    { '<F11>', function() require('dap').step_into() end, desc = 'Debug: step into' },
+    { '<S-F11>', function() require('dap').step_out() end, desc = 'Debug: step out' },
+    { '<F23>', function() require('dap').step_out() end, desc = 'Debug: step out' }, -- <S-F11> in some terminals
   },
   config = function()
     local dap = require('dap')
