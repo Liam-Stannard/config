@@ -65,6 +65,9 @@ Folds come from treesitter and all start open. These are Vim's own keys.
 | `<leader>bd` | | Close tab, keep the window layout | |
 | `<leader>bo` | | Close other tabs | |
 | `<leader>bp` | | Pin tab | |
+| `<leader>bh` / `<leader>bl` | | Move the tab left / right | |
+| `<leader>bj` | | Pick a tab by its letter | |
+| `<leader>bH` / `<leader>bL` | | Close the tabs to the left / right | |
 | `<C-\>` | n, t | Toggle terminal (snacks) | |
 | `<leader>;` | | Pick a breadcrumb (dropbar) | |
 

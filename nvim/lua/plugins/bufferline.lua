@@ -9,6 +9,11 @@ return {
     { '<leader>bd', function() Snacks.bufdelete() end, desc = 'Close tab (keep window layout)' },
     { '<leader>bo', function() Snacks.bufdelete.other() end, desc = 'Close other tabs' },
     { '<leader>bp', '<cmd>BufferLineTogglePin<cr>', desc = 'Pin tab' },
+    { '<leader>bl', '<cmd>BufferLineMoveNext<cr>', desc = 'Move tab right' },
+    { '<leader>bh', '<cmd>BufferLineMovePrev<cr>', desc = 'Move tab left' },
+    { '<leader>bj', '<cmd>BufferLinePick<cr>', desc = 'Pick tab' },
+    { '<leader>bL', '<cmd>BufferLineCloseRight<cr>', desc = 'Close tabs to the right' },
+    { '<leader>bH', '<cmd>BufferLineCloseLeft<cr>', desc = 'Close tabs to the left' },
   },
   opts = {
     options = {
