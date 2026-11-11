@@ -40,28 +40,7 @@ The colour scheme is [nord.nvim](https://github.com/gbprod/nord.nvim); the layou
 
 ### Keymaps
 
-The leader is `,`. `<leader>?` lists the current buffer's keymaps, and which-key shows each `<leader>` group as you type.
-
-| Keys | Does |
-| --- | --- |
-| `<C-h/j/k/l>` | Move between windows (also from the terminal) |
-| `<C-s>` | Save |
-| `<Esc>` | Clear search highlight |
-| `J` / `K` (visual) | Move the selection down / up |
-| `<leader>p` (visual) | Paste over the selection without losing what you copied |
-| `af` `ic` `aa` `ao` `a?` ... | Text objects: function, class, parameter, loop, conditional (`a` / `i`) |
-| `]m` / `[m`, `]]` / `[[` | Next / previous function, class |
-| `ys` / `ds` / `cs` | Add / delete / change surroundings (nvim-surround) |
-| `<leader>f` | Find: `f` files, `g` grep, `.` word under cursor, `o` recent, `r` resume, `t` todos, `h` help |
-| `<leader>s` | Search and replace (grug-far): `r` open, `w` word or selection |
-| `<leader>g` | Git: fugitive, plus diffview `v` changes, `V` branch as the MR will show it, `h` / `H` history, `q` close |
-| `<leader>q` | Sessions: `s` restore, `S` pick, `l` last, `d` don't save |
-| `<leader>u` | Toggles: `w` wrap, `s` spell, `l` line numbers, `d` diagnostics, `h` inlay hints |
-| `<leader>x` | Trouble: `x` diagnostics, `w` buffer diagnostics, `t` todos |
-| `F5` `F9` `F10` `F11` `S-F11` | Debug: continue, breakpoint, step over / into / out (`<leader>dB` conditional breakpoint) |
-| `]t` / `[t` | Next / previous TODO comment |
-
-`<leader>gV` diffs from where the branch left the remote's default branch to the files on disk, so uncommitted edits show too. New files show once they're added (`git add -N` is enough).
+The leader is `,`. Every keymap is listed in [KEYBINDS.md](KEYBINDS.md), and `<leader>?` in nvim shows the current buffer's.
 
 ### System packages
 
