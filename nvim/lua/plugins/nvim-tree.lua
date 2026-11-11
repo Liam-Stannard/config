@@ -7,6 +7,12 @@ return {
 	},
 	config = function()
 		require("nvim-tree").setup({
+			on_attach = function(bufnr)
+				local api = require("nvim-tree.api")
+				api.config.mappings.default_on_attach(bufnr)
+				-- free <C-k> (file info) for the global window-up keymap
+				vim.keymap.del("n", "<C-k>", { buffer = bufnr })
+			end,
 			view = {
 				width = 80,
 				number = true,
