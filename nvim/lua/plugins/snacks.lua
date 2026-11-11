@@ -3,7 +3,8 @@ return {
   lazy = false,
   opts = {
     terminal = {},
-    indent = {},
+    indent = { scope = { enabled = true } }, -- highlight the current block's guide
+    scroll = {}, -- smooth scrolling
     words = {},
   },
   keys = {

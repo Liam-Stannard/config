@@ -29,6 +29,25 @@ function M.setup()
     capabilities = require('blink.cmp').get_lsp_capabilities(),
   })
 
+  -- VS Code-style diagnostics: underlines (drawn as squiggles by the
+  -- vscode theme), severity icons in the gutter, short inline messages and
+  -- rounded popups.
+  vim.diagnostic.config({
+    underline = true,
+    severity_sort = true,
+    virtual_text = { prefix = '●', spacing = 4 },
+    float = { border = 'rounded', source = true },
+    signs = {
+      text = {
+        -- VS Code codicons: error, warning, info, lightbulb
+        [vim.diagnostic.severity.ERROR] = '\u{ea87}',
+        [vim.diagnostic.severity.WARN] = '\u{ea6c}',
+        [vim.diagnostic.severity.INFO] = '\u{ea74}',
+        [vim.diagnostic.severity.HINT] = '\u{ea61}',
+      },
+    },
+  })
+
   vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, { desc = 'Next diagnostic' })
   vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end, { desc = 'Prev diagnostic' })
   vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic' })
