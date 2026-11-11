@@ -15,7 +15,6 @@ opt.modelines = 0
 opt.number = true
 opt.relativenumber = true -- current line shows its absolute number
 opt.cursorline = true
-opt.colorcolumn = "120" -- like VS Code's editor.rulers
 opt.scrolloff = 8
 opt.fillchars = { eob = " " } -- hide the ~ on lines past the end of the buffer
 opt.winborder = "rounded" -- default border for floating windows (hover, signature help)
