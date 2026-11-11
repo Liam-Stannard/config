@@ -85,11 +85,17 @@ function M.setup()
         if client.name == 'vtsls' then
           vim.keymap.set('n', '<leader>cR', rename_file, vim.tbl_extend('force', opts, { desc = 'Rename file' }))
         end
+        if client.name == 'eslint' then
+          vim.keymap.set('n', '<leader>cf', '<cmd>LspEslintFixAll<cr>', vim.tbl_extend('force', opts, { desc = 'ESLint fix all' }))
+        end
       end
     end,
   })
 
-  vim.lsp.enable({ 'vtsls', 'angularls', 'lua_ls', 'bashls', 'rust_analyzer' })
+  vim.lsp.enable({
+    'vtsls', 'angularls', 'lua_ls', 'bashls', 'rust_analyzer',
+    'jsonls', 'yamlls', 'cssls', 'html', 'eslint',
+  })
 end
 
 return M
