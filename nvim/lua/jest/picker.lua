@@ -123,15 +123,15 @@ function M.show(rows, opts)
           actions.close(prompt_bufnr)
           require('jest').run_last()
         end
-        map('i', '<C-r>', rerun)
-        map('n', '<C-r>', rerun)
+        map('i', '<C-r>', rerun, { desc = 'Jest: rerun last' })
+        map('n', '<C-r>', rerun, { desc = 'Jest: rerun last' })
 
         local function open_trouble()
           actions.close(prompt_bufnr)
           M.open_trouble(rows)
         end
-        map('i', '<C-t>', open_trouble)
-        map('n', '<C-t>', open_trouble)
+        map('i', '<C-t>', open_trouble, { desc = 'Jest: results in Trouble' })
+        map('n', '<C-t>', open_trouble, { desc = 'Jest: results in Trouble' })
 
         return true
       end,
@@ -203,8 +203,8 @@ function M.pick()
       end
 
       actions.select_default:replace(function() run_selected(false) end)
-      map('i', '<C-d>', function() run_selected(true) end)
-      map('n', '<C-d>', function() run_selected(true) end)
+      map('i', '<C-d>', function() run_selected(true) end, { desc = 'Jest: run selected directory' })
+      map('n', '<C-d>', function() run_selected(true) end, { desc = 'Jest: run selected directory' })
 
       return true
     end,

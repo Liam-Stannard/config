@@ -26,10 +26,8 @@ return {
     map(km.last, npm.run_last, 'Npm: rerun last script')
     map(km.stop, function() npm.stop() end, 'Npm: stop last script')
     map(km.toggle_output, npm.toggle_output, 'Npm: toggle output window')
-
-    for script, lhs in pairs(km.scripts or {}) do
-      map(lhs, function() npm.run(script) end, 'Npm: run ' .. script)
-    end
+    -- to bind one script to a key, add it explicitly, e.g.
+    -- map('<leader>nt', function() npm.run('test') end, 'Npm: run test')
 
     local function complete_scripts()
       local file = vim.api.nvim_buf_get_name(0)

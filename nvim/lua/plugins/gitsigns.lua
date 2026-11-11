@@ -27,7 +27,7 @@ return {
         end
         vim.schedule(gitsigns.next_hunk)
         return '<Ignore>'
-      end, vim.tbl_extend('force', opts, { expr = true }))
+      end, vim.tbl_extend('force', opts, { expr = true, desc = 'Next hunk' }))
 
       vim.keymap.set('n', '[c', function()
         if vim.wo.diff then
@@ -35,11 +35,11 @@ return {
         end
         vim.schedule(gitsigns.prev_hunk)
         return '<Ignore>'
-      end, vim.tbl_extend('force', opts, { expr = true }))
+      end, vim.tbl_extend('force', opts, { expr = true, desc = 'Previous hunk' }))
 
-      vim.keymap.set('n', '<leader>hs', gitsigns.stage_hunk, opts)
-      vim.keymap.set('n', '<leader>hr', gitsigns.reset_hunk, opts)
-      vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, opts)
+      vim.keymap.set('n', '<leader>hs', gitsigns.stage_hunk, vim.tbl_extend('force', opts, { desc = 'Stage hunk' }))
+      vim.keymap.set('n', '<leader>hr', gitsigns.reset_hunk, vim.tbl_extend('force', opts, { desc = 'Reset hunk' }))
+      vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, vim.tbl_extend('force', opts, { desc = 'Preview hunk' }))
 
       vim.keymap.set('n', '<leader>gB', function()
         gitsigns.blame_line({ full = true })

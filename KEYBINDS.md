@@ -1,6 +1,6 @@
 # Neovim keybinds
 
-Every keymap this config defines, grouped by what it's for. The leader is `,` and the local leader is `\`.
+Every keymap this config defines, grouped by what it's for. The leader is `,` and the local leader is `\`. Keymaps on `<leader>` work everywhere. Keymaps on `<localleader>` (`\`) only exist for some filetypes, such as Angular and Java.
 
 - `<leader>?` lists the keymaps for the current buffer, and which-key pops up the rest of a `<leader>` group as you type it.
 - **Mode** is `n` normal, `i` insert, `x` visual, `o` operator-pending (after `d`, `c`, `y` …) and `t` terminal. Blank means normal.
@@ -74,14 +74,14 @@ In the terminal, `<C-l>` moves to the window on the right rather than clearing t
 
 | Keys | Does |
 | --- | --- |
-| `<leader>bt` | Toggle the file tree |
-| `<leader>bf` | Reveal the current file in the tree |
-| `<leader>br` | Refresh the tree |
-| `<leader>bc` / `<leader>be` | Collapse / expand the folder under the cursor |
-| `<leader>bC` / `<leader>bE` | Collapse / expand the whole tree |
-| `<leader>bb` | Toggle a bookmark |
-| `<leader>bB` | Clear all bookmarks |
-| `<leader>bm` | Move bookmarked files |
+| `<leader>et` | Toggle the file tree |
+| `<leader>ef` | Reveal the current file in the tree |
+| `<leader>er` | Refresh the tree |
+| `<leader>ec` / `<leader>ee` | Collapse / expand the folder under the cursor |
+| `<leader>eC` / `<leader>eE` | Collapse / expand the whole tree |
+| `<leader>eb` | Toggle a bookmark |
+| `<leader>eB` | Clear all bookmarks |
+| `<leader>em` | Move bookmarked files |
 
 Inside the tree, nvim-tree's default keys apply (`g?` lists them), except `<C-k>`, which moves to the window above.
 
@@ -99,20 +99,20 @@ Inside the tree, nvim-tree's default keys apply (`g?` lists them), except `<C-k>
 | `<leader>fw` | | Symbols in the workspace | |
 | `<leader>ft` | | TODO comments | |
 | `<leader>fh` | | Help tags | |
-| `<leader>af` | | Find Angular files (no specs) | |
-| `<leader>ag` | | Grep Angular files (no specs) | |
-| `<leader>ac` | | Jump to the component's `.ts` | TS, HTML, SCSS, CSS |
-| `<leader>at` | | Jump to the component's `.spec.ts` | TS, HTML, SCSS, CSS |
-| `<leader>ah` | | Jump to the component's `.html` | TS, HTML, SCSS, CSS |
-| `<leader>as` | | Jump to the component's `.scss` | TS, HTML, SCSS, CSS |
+| `<localleader>f` | | Find Angular files (no specs) | TS, HTML, SCSS, CSS |
+| `<localleader>g` | | Grep Angular files (no specs) | TS, HTML, SCSS, CSS |
+| `<localleader>c` | | Jump to the component's `.ts` | TS, HTML, SCSS, CSS |
+| `<localleader>t` | | Jump to the component's `.spec.ts` | TS, HTML, SCSS, CSS |
+| `<localleader>h` | | Jump to the component's `.html` | TS, HTML, SCSS, CSS |
+| `<localleader>s` | | Jump to the component's `.scss` | TS, HTML, SCSS, CSS |
 
 ### Harpoon
 
 | Keys | Does |
 | --- | --- |
-| `<leader>ha` | Add the file to Harpoon |
-| `<leader>hh` | Harpoon quick menu |
-| `<leader>h1` … `<leader>h4` | Go to Harpoon file 1–4 |
+| `<leader>ja` | Add the file to Harpoon |
+| `<leader>jj` | Harpoon quick menu |
+| `<leader>j1` … `<leader>j4` | Go to Harpoon file 1–4 |
 
 ## Search and replace (grug-far)
 
@@ -142,11 +142,11 @@ Defined in `nvim/lua/config/lsp.lua`. Most only exist once a language server has
 | `gO` | | Organise imports | LSP |
 | `<leader>cR` | | Rename the file and update imports | TS / JS (vtsls) |
 | `<leader>cf` | | ESLint: fix everything in the file | ESLint projects |
-| `<leader>co` | | Organise imports | Java |
-| `<leader>cv` | n, x | Extract variable | Java |
-| `<leader>cm` | n, x | Extract method | Java |
+| `<localleader>o` | | Organise imports | Java |
+| `<localleader>v` | n, x | Extract variable | Java |
+| `<localleader>m` | n, x | Extract method | Java |
 | `]d` / `[d` | | Next / previous diagnostic, with its message | |
-| `<leader>e` | | Show the diagnostic under the cursor | |
+| `<leader>cd` | | Show the diagnostic under the cursor | |
 | `<leader>lr` | | Restart language servers | |
 
 `grr` is one of Neovim's built-in LSP keymaps. The others also work: `grn` rename, `gra` code actions (also on a visual selection), `gri` implementation, `grt` type definition and `grx` run the code lens on this line.
@@ -216,7 +216,7 @@ Defined in `nvim/lua/config/lsp.lua`. Most only exist once a language server has
 | --- | --- | --- |
 | `<leader>tf` | Run the current file | |
 | `<leader>td` | Run the current file's directory | |
-| `<leader>tn` | Run the nearest test | Not Java |
+| `<leader>tn` | Run the nearest test | |
 | `<leader>tl` | Rerun the last run | |
 | `<leader>to` | Reopen the last results | |
 | `<leader>tp` | Pick a test file to run | |
@@ -238,8 +238,8 @@ Inside Jest's own windows:
 
 | Keys | Does |
 | --- | --- |
-| `<leader>tn` | Test the nearest method (replaces Jest's `<leader>tn` in Java buffers) |
-| `<leader>tc` | Test the class |
+| `<localleader>n` | Test the nearest method |
+| `<localleader>c` | Test the class |
 
 ### npm scripts (`nvim/lua/npm`)
 

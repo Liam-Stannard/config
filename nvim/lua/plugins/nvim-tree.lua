@@ -49,47 +49,47 @@ return {
 			end
 		end
 
-		vim.keymap.set("n", "<leader>bt", api.tree.toggle, vim.tbl_extend("force", opts, { desc = "Toggle file tree" }))
-		vim.keymap.set("n", "<leader>bf", function()
+		vim.keymap.set("n", "<leader>et", api.tree.toggle, vim.tbl_extend("force", opts, { desc = "Toggle file tree" }))
+		vim.keymap.set("n", "<leader>ef", function()
 			api.tree.find_file({ open = true, focus = true })
 		end, vim.tbl_extend("force", opts, { desc = "Find current file in tree" }))
-		vim.keymap.set("n", "<leader>br", api.tree.reload, vim.tbl_extend("force", opts, { desc = "Refresh tree" }))
+		vim.keymap.set("n", "<leader>er", api.tree.reload, vim.tbl_extend("force", opts, { desc = "Refresh tree" }))
 
 		vim.keymap.set(
 			"n",
-			"<leader>bc",
+			"<leader>ec",
 			collapse_node,
 			vim.tbl_extend("force", opts, { desc = "Collapse node under cursor" })
 		)
 		vim.keymap.set(
 			"n",
-			"<leader>be",
+			"<leader>ee",
 			expand_node,
 			vim.tbl_extend("force", opts, { desc = "Expand node under cursor" })
 		)
 		vim.keymap.set(
 			"n",
-			"<leader>bC",
+			"<leader>eC",
 			api.tree.collapse_all,
 			vim.tbl_extend("force", opts, { desc = "Collapse entire tree" })
 		)
 		vim.keymap.set(
 			"n",
-			"<leader>bE",
+			"<leader>eE",
 			api.tree.expand_all,
 			vim.tbl_extend("force", opts, { desc = "Expand entire tree" })
 		)
 
-		vim.keymap.set("n", "<leader>bb", api.marks.toggle, vim.tbl_extend("force", opts, { desc = "Toggle bookmark" }))
+		vim.keymap.set("n", "<leader>eb", api.marks.toggle, vim.tbl_extend("force", opts, { desc = "Toggle bookmark" }))
 		vim.keymap.set(
 			"n",
-			"<leader>bB",
+			"<leader>eB",
 			api.marks.clear,
 			vim.tbl_extend("force", opts, { desc = "Clear all bookmarks" })
 		)
 		vim.keymap.set(
 			"n",
-			"<leader>bm",
+			"<leader>em",
 			api.marks.bulk.move,
 			vim.tbl_extend("force", opts, { desc = "Move bookmarked files" })
 		)

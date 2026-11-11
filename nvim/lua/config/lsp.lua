@@ -50,7 +50,7 @@ function M.setup()
 
   vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, { desc = 'Next diagnostic' })
   vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end, { desc = 'Prev diagnostic' })
-  vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic' })
+  vim.keymap.set('n', '<leader>cd', vim.diagnostic.open_float, { desc = 'Show diagnostic' })
   vim.keymap.set('n', '<leader>lr', '<cmd>lsp restart<cr>', { desc = 'Restart LSP' })
 
   -- This is where you enable features that only work
@@ -60,21 +60,21 @@ function M.setup()
     callback = function(event)
       local opts = { buffer = event.buf }
 
-      vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-      vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-      vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-      vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-      vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-      vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-      vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-      vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+      vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', vim.tbl_extend('force', opts, { desc = 'Hover documentation' }))
+      vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', vim.tbl_extend('force', opts, { desc = 'Go to definition' }))
+      vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', vim.tbl_extend('force', opts, { desc = 'Go to declaration' }))
+      vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', vim.tbl_extend('force', opts, { desc = 'Go to implementation' }))
+      vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', vim.tbl_extend('force', opts, { desc = 'Go to type definition' }))
+      vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', vim.tbl_extend('force', opts, { desc = 'Signature help' }))
+      vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', vim.tbl_extend('force', opts, { desc = 'Rename symbol' }))
+      vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', vim.tbl_extend('force', opts, { desc = 'Code action' }))
       vim.keymap.set('n', 'gO', function()
         vim.lsp.buf.code_action({
           context = { only = { 'source.organizeImports' }, diagnostics = {} },
           apply = true,
         })
       end, vim.tbl_extend('force', opts, { desc = 'Organize imports' }))
-      vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+      vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', vim.tbl_extend('force', opts, { desc = 'Signature help' }))
 
       local client = vim.lsp.get_client_by_id(event.data.client_id)
       if client then

@@ -11,9 +11,10 @@ map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 
 -- move between windows (tree, editor, terminal, chat) without <C-w>;
 -- in the terminal this replaces the shell's <C-l> clear-screen
-for key, dir in pairs({ h = "left", j = "down", k = "up", l = "right" }) do
-  map({ "n", "t" }, "<C-" .. key .. ">", "<cmd>wincmd " .. key .. "<cr>", { desc = "Window " .. dir })
-end
+map({ "n", "t" }, "<C-h>", "<cmd>wincmd h<cr>", { desc = "Window left" })
+map({ "n", "t" }, "<C-j>", "<cmd>wincmd j<cr>", { desc = "Window down" })
+map({ "n", "t" }, "<C-k>", "<cmd>wincmd k<cr>", { desc = "Window up" })
+map({ "n", "t" }, "<C-l>", "<cmd>wincmd l<cr>", { desc = "Window right" })
 
 map("x", "J", ":m '>+1<cr>gv=gv", { desc = "Move selection down", silent = true })
 map("x", "K", ":m '<-2<cr>gv=gv", { desc = "Move selection up", silent = true })
