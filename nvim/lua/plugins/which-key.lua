@@ -4,6 +4,13 @@ return {
   opts = {
     spec = {
       { "<leader>c", group = "Code" },
+      { "<leader>d", group = "Debug" },
+      { "<leader>f", group = "Find" },
+      { "<leader>g", group = "Git" },
+      { "<leader>q", group = "Session" },
+      { "<leader>s", group = "Search / replace" },
+      { "<leader>u", group = "Toggle" },
+      { "<leader>x", group = "Trouble" },
     },
   },
   keys = {
