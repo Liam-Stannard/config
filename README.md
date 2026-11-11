@@ -36,6 +36,8 @@ npm i -g @agentclientprotocol/claude-agent-acp
 
 Plugins are managed by [lazy.nvim](https://github.com/folke/lazy.nvim), which installs itself on first start.
 
+The look is modelled on VS Code: the [vscode.nvim](https://github.com/Mofiqul/vscode.nvim) Dark Modern theme, bufferline tabs, a lualine status bar, dropbar breadcrumbs, treesitter-context sticky scroll and a VS Code-style nvim-tree explorer. Tab keys: `<S-h>`/`<S-l>` switch, `<leader>bd` closes, `<leader>bo` closes others, `<leader>bp` pins.
+
 ### System packages
 
 | Needed for | Package | Used by |
@@ -114,6 +116,8 @@ Run `:checkhealth` after the first start to confirm everything is found.
 | Font (`font_family JetBrainsMono Nerd Font`) | `ttf-jetbrains-mono-nerd` |
 
 The Nerd Font also provides the icon on the active tab and the icons in nvim. Without it, kitty falls back to another font and icons show as boxes.
+
+Colours come from `vscode-dark.conf` (VS Code Dark Modern, matching nvim). To go back to Nord, change the `include` at the top of `kitty.conf` to `nord.conf`.
 
 ## git
 
