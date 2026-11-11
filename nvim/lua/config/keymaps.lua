@@ -1,12 +1,6 @@
 -- Editor-wide keymaps. Plugin keymaps live with their plugin in lua/plugins/.
+-- Toggles (<leader>u…) are in plugins/snacks.lua.
 local map = vim.keymap.set
-local opt = vim.opt
-
-map("n", "<C-c>", function()
-  local enabled = not opt.number:get()
-  opt.number = enabled
-  opt.relativenumber = enabled
-end, { desc = "Toggle line numbers" })
 
 map("n", "<C-d>", "<C-d>zz", { desc = "Half page down, centered" })
 map("n", "<C-u>", "<C-u>zz", { desc = "Half page up, centered" })

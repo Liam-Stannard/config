@@ -89,11 +89,6 @@ function M.setup()
     end,
   })
 
-  vim.keymap.set('n', '<leader>uh', function()
-    local bufnr = vim.api.nvim_get_current_buf()
-    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
-  end, { desc = 'Toggle inlay hints' })
-
   vim.lsp.enable({ 'vtsls', 'angularls', 'lua_ls', 'bashls', 'rust_analyzer' })
 end
 

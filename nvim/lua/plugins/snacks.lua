@@ -11,6 +11,19 @@ return {
       wo = { cursorline = false }, -- the current-line highlight shows through transparent pixels
     },
   },
+  init = function()
+    -- which-key shows each toggle's current state
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'VeryLazy',
+      callback = function()
+        Snacks.toggle.option('wrap', { name = 'Line wrap' }):map('<leader>uw')
+        Snacks.toggle.option('spell', { name = 'Spell check' }):map('<leader>us')
+        Snacks.toggle.line_number():map('<leader>ul')
+        Snacks.toggle.diagnostics():map('<leader>ud')
+        Snacks.toggle.inlay_hints():map('<leader>uh')
+      end,
+    })
+  end,
   keys = {
     {
       [[<c-\>]],
