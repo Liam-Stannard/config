@@ -133,7 +133,7 @@ Defined in `nvim/lua/config/lsp.lua`. Most only exist once a language server has
 | `gD` | | Go to declaration | LSP |
 | `gi` | | Go to implementation | LSP |
 | `go` | | Go to type definition | LSP |
-| `gr` | | List references | LSP |
+| `grr` | | List references | LSP |
 | `gs` | | Signature help | LSP |
 | `<C-k>` | i | Signature help | LSP |
 | `<F2>` | | Rename symbol | LSP |
@@ -149,7 +149,7 @@ Defined in `nvim/lua/config/lsp.lua`. Most only exist once a language server has
 | `<leader>e` | | Show the diagnostic under the cursor | |
 | `<leader>lr` | | Restart language servers | |
 
-Neovim's own `grn` / `gra` / `grr` / `gri` / `grt` / `grx` keymaps are removed so that `gr` responds without a delay.
+`grr` is one of Neovim's built-in LSP keymaps. The others also work: `grn` rename, `gra` code actions (also on a visual selection), `gri` implementation, `grt` type definition and `grx` run the code lens on this line.
 
 ### Completion (blink.cmp)
 
