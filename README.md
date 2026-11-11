@@ -38,16 +38,41 @@ Plugins are managed by [lazy.nvim](https://github.com/folke/lazy.nvim), which in
 
 The colour scheme is [nord.nvim](https://github.com/gbprod/nord.nvim); the layout is modelled on VS Code: bufferline tabs, a lualine status bar, dropbar breadcrumbs, treesitter-context sticky scroll and a VS Code-style nvim-tree explorer. Tab keys: `<S-h>`/`<S-l>` switch, `<leader>bd` closes, `<leader>bo` closes others, `<leader>bp` pins.
 
+### Keymaps
+
+The leader is `,`. `<leader>?` lists the current buffer's keymaps, and which-key shows each `<leader>` group as you type.
+
+| Keys | Does |
+| --- | --- |
+| `<C-h/j/k/l>` | Move between windows (also from the terminal) |
+| `<C-s>` | Save |
+| `<Esc>` | Clear search highlight |
+| `J` / `K` (visual) | Move the selection down / up |
+| `<leader>p` (visual) | Paste over the selection without losing what you copied |
+| `af` `ic` `aa` `ao` `a?` ... | Text objects: function, class, parameter, loop, conditional (`a` / `i`) |
+| `]m` / `[m`, `]]` / `[[` | Next / previous function, class |
+| `ys` / `ds` / `cs` | Add / delete / change surroundings (nvim-surround) |
+| `<leader>f` | Find: `f` files, `g` grep, `.` word under cursor, `o` recent, `r` resume, `t` todos, `h` help |
+| `<leader>s` | Search and replace (grug-far): `r` open, `w` word or selection |
+| `<leader>g` | Git: fugitive, plus diffview `v` changes, `V` branch as the MR will show it, `h` / `H` history, `q` close |
+| `<leader>q` | Sessions: `s` restore, `S` pick, `l` last, `d` don't save |
+| `<leader>u` | Toggles: `w` wrap, `s` spell, `l` line numbers, `d` diagnostics, `h` inlay hints |
+| `<leader>x` | Trouble: `x` diagnostics, `w` buffer diagnostics, `t` todos |
+| `F5` `F9` `F10` `F11` `S-F11` | Debug: continue, breakpoint, step over / into / out (`<leader>dB` conditional breakpoint) |
+| `]t` / `[t` | Next / previous TODO comment |
+
+`<leader>gV` diffs from where the branch left the remote's default branch to the files on disk, so uncommitted edits show too. New files show once they're added (`git add -N` is enough).
+
 ### System packages
 
 | Needed for | Package | Used by |
 | --- | --- | --- |
 | Neovim 0.12+ | `neovim` | Config uses `vim.lsp.enable`, `vim.lsp.config`, `vim.system` |
 | Cloning plugins | `git` | lazy.nvim, fugitive, gitsigns |
-| File search and grep | `ripgrep` | Telescope `live_grep` and Angular pickers, `jest.pick()` |
+| File search and grep | `ripgrep` | Telescope `live_grep` and Angular pickers, grug-far, `jest.pick()` |
 | Faster file finding | `fd` | Telescope `find_files` (falls back to `rg`) |
 | Building parsers | `tree-sitter-cli`, `gcc` | nvim-treesitter (`main` branch) |
-| Building and unpacking tools | `unzip`, `gcc`, `make` | Mason, blink.cmp |
+| Building and unpacking tools | `unzip`, `gcc`, `make` | Mason, blink.cmp, telescope-fzf-native |
 | JS/TS tooling | `nodejs`, `npm` | Mason npm packages, jest, npm runner, js-debug-adapter |
 | Java | `jdk-openjdk` (25 or newer to run jdtls) | jdtls, java-debug-adapter, java-test |
 | Rust | `rustup` (+ `rustfmt`, `rust-src`) | rust-analyzer, `rustfmt` formatting via conform |
@@ -71,18 +96,22 @@ These are installed on first start into `~/.local/share/nvim/mason`. They only n
 | `lua_ls` | LSP | Lua |
 | `bashls` | LSP | Bash |
 | `rust_analyzer` | LSP | Rust |
+| `jsonls`, `yamlls` | LSP | JSON / YAML, with SchemaStore schemas (`package.json`, `tsconfig.json`, GitLab CI, ...) |
+| `cssls`, `html` | LSP | CSS / SCSS, HTML and Angular templates |
+| `eslint` | LSP | ESLint diagnostics and fixes for TS / JS (`<leader>cf` fixes all) |
 | `jdtls` | LSP | Java |
 | `prettier` | Formatter | TS, JS, HTML, CSS, SCSS, JSON |
 | `stylua` | Formatter | Lua |
 | `shfmt` | Formatter | Shell |
 | `google-java-format` | Formatter | Java |
-| `eslint_d` | Linter | TS / JS |
 | `js-debug-adapter` | Debugger | Node / Chrome (Jest, `ng serve`) |
 | `java-debug-adapter`, `java-test` | Debugger | Java |
 
 ### Treesitter parsers
 
-Built on first start, which needs `tree-sitter-cli`: bash, c, elixir, groovy, html, java, javascript, lua, markdown, markdown_inline, python, rust, typescript, vim, vimdoc.
+Built on first start, which needs `tree-sitter-cli`: angular, bash, c, css, elixir, groovy, html, java, javascript, jsdoc, json, lua, markdown, markdown_inline, python, regex, rust, scss, tsx, typescript, vim, vimdoc, yaml.
+
+Overrides for nvim-lspconfig's server configs live in `nvim/after/lsp/`, so they load after (and win over) lspconfig's own `lsp/` files.
 
 ### Project-level requirements
 
