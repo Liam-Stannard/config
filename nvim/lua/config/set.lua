@@ -21,7 +21,7 @@ opt.winborder = "rounded" -- default border for floating windows (hover, signatu
 opt.ruler = true
 opt.visualbell = false
 opt.encoding = "utf-8"
-opt.mouse = ""
+opt.mouse = "a" -- clickable tabs, breadcrumbs and file tree
 
 opt.tabstop = 2
 opt.shiftwidth = 2
