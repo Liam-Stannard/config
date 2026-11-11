@@ -8,6 +8,7 @@ vim.cmd("filetype plugin indent on")
 opt.backup = false
 opt.writebackup = false
 opt.swapfile = false
+opt.undofile = true -- undo history survives restarts (stdpath('state')/undo)
 opt.updatetime = 300
 
 opt.modelines = 0
@@ -22,6 +23,18 @@ opt.ruler = true
 opt.visualbell = false
 opt.encoding = "utf-8"
 opt.mouse = "a" -- clickable tabs, breadcrumbs and file tree
+opt.splitright = true -- new splits open to the right / below, like VS Code
+opt.splitbelow = true
+opt.breakindent = true -- wrapped lines keep their indent
+opt.linebreak = true -- and wrap at word boundaries
+opt.confirm = true -- :q with unsaved changes asks instead of erroring
+opt.virtualedit = "block" -- block selections can extend past the end of a line
+
+-- treesitter folds, all open on start (za toggles, zM / zR close / open all)
+opt.foldmethod = "expr"
+opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+opt.foldlevel = 99
+opt.foldtext = "" -- show the folded line with its syntax highlighting
 
 opt.tabstop = 2
 opt.shiftwidth = 2
