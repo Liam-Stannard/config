@@ -12,7 +12,7 @@ opt.updatetime = 300
 
 opt.modelines = 0
 opt.number = true
-opt.relativenumber = false -- VS Code shows absolute line numbers
+opt.relativenumber = true -- current line shows its absolute number
 opt.cursorline = true
 opt.colorcolumn = "120" -- like VS Code's editor.rulers
 opt.scrolloff = 8
@@ -44,6 +44,7 @@ opt.timeoutlen = 300
 vim.keymap.set("n", "<C-c>", function()
   local enabled = not opt.number:get()
   opt.number = enabled
+  opt.relativenumber = enabled
 end, { desc = "Toggle line numbers" })
 
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Half page down, centered" })

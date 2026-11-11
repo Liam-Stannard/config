@@ -7,7 +7,11 @@ return {
 	},
 	config = function()
 		require("nvim-tree").setup({
-			view = { width = 32 },
+			view = {
+				width = 80,
+				number = true,
+				relativenumber = true, -- jump to a file with e.g. 5j
+			},
 			renderer = {
 				root_folder_label = false,
 				highlight_git = "name", -- colour file names by git status, like VS Code
