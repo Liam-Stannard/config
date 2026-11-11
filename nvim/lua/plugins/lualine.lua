@@ -4,7 +4,7 @@ return {
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   opts = {
     options = {
-      theme = 'vscode', -- shipped by vscode.nvim
+      theme = 'nord', -- built into lualine
       globalstatus = true, -- one bar across the bottom, like VS Code
       component_separators = '',
       section_separators = '',

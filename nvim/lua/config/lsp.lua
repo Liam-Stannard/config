@@ -30,7 +30,7 @@ function M.setup()
   })
 
   -- VS Code-style diagnostics: underlines (drawn as squiggles by the
-  -- vscode theme), severity icons in the gutter, short inline messages and
+  -- colour scheme), severity icons in the gutter, short inline messages and
   -- rounded popups.
   vim.diagnostic.config({
     underline = true,
