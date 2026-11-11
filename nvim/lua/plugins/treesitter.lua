@@ -1,19 +1,27 @@
 local langs = {
+	"angular", -- Angular component templates (filetype htmlangular)
 	"bash",
 	"c",
+	"css",
 	"elixir",
 	"groovy",
 	"html",
 	"java",
 	"javascript",
+	"jsdoc", -- injected into JS/TS doc comments
+	"json",
 	"lua",
 	"markdown",
 	"markdown_inline",
 	"python",
+	"regex", -- injected into regex literals
 	"rust",
+	"scss",
+	"tsx",
 	"typescript",
 	"vim",
 	"vimdoc",
+	"yaml",
 }
 
 return {
