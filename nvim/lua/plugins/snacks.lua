@@ -6,6 +6,7 @@ return {
     indent = { scope = { enabled = true } }, -- highlight the current block's guide
     scroll = {}, -- smooth scrolling
     words = {},
+    image = {}, -- show images in buffers and inline in markdown (kitty graphics)
   },
   keys = {
     {
