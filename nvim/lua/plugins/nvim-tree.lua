@@ -6,7 +6,18 @@ return {
 		"nvim-tree/nvim-web-devicons",
 	},
 	config = function()
-		require("nvim-tree").setup({})
+		require("nvim-tree").setup({
+			view = { width = 32 },
+			renderer = {
+				root_folder_label = false,
+				highlight_git = "name", -- colour file names by git status, like VS Code
+				highlight_opened_files = "name",
+				indent_markers = { enable = true },
+				icons = { show = { git = false } }, -- VS Code uses colours, not git icons
+			},
+			diagnostics = { enable = true, show_on_dirs = true },
+			update_focused_file = { enable = true }, -- reveal the current file, like VS Code's auto-reveal
+		})
 
 		local api = require("nvim-tree.api")
 		local opts = { noremap = true, silent = true }
