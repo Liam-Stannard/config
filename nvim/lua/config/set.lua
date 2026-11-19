@@ -30,6 +30,10 @@ opt.linebreak = true -- and wrap at word boundaries
 opt.confirm = true -- :q with unsaved changes asks instead of erroring
 opt.virtualedit = "block" -- block selections can extend past the end of a line
 
+-- true: the snacks terminal opens under the editor and the file tree stays
+-- full height, like VS Code. false: the terminal spans the full width.
+vim.g.tree_full_height = true
+
 -- treesitter folds, all open on start (za toggles, zM / zR close / open all)
 opt.foldmethod = "expr"
 opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"

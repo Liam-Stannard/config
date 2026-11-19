@@ -5,8 +5,10 @@ return {
     terminal = {
       win = {
         -- the terminal opens with botright, under every window; move the file
-        -- tree back to full height on the left, like VS Code's sidebar
+        -- tree back to full height on the left, like VS Code's sidebar.
+        -- Set vim.g.tree_full_height = false in config/set.lua to turn it off.
         on_win = function()
+          if not vim.g.tree_full_height then return end
           local tree = require('nvim-tree.api').tree.winid()
           if not tree then return end
           local width = vim.api.nvim_win_get_width(tree)
