@@ -32,6 +32,16 @@ rustup component add rustfmt rust-src
 npm i -g @agentclientprotocol/claude-agent-acp
 ```
 
+Then install the clipboard tool for your session, `wl-clipboard` on Wayland or `xclip` on X11:
+
+```fish
+if test "$XDG_SESSION_TYPE" = wayland
+    sudo pacman -S --needed wl-clipboard
+else
+    sudo pacman -S --needed xclip
+end
+```
+
 ## nvim
 
 Plugins are managed by [lazy.nvim](https://github.com/folke/lazy.nvim), which installs itself on first start.
@@ -55,6 +65,7 @@ The leader is `,`. Every keymap is listed in [KEYBINDS.md](KEYBINDS.md), and `<l
 | JS/TS tooling | `nodejs`, `npm` | Mason npm packages, jest, npm runner, js-debug-adapter |
 | Java | `jdk-openjdk` (25 or newer to run jdtls) | jdtls, java-debug-adapter, java-test |
 | Rust | `rustup` (+ `rustfmt`, `rust-src`) | rust-analyzer, `rustfmt` formatting via conform |
+| System clipboard | `wl-clipboard` (Wayland) or `xclip` (X11) | `clipboard=unnamedplus`, so `y` and `p` use the system clipboard |
 | Markdown preview | `glow` | glow.nvim (`<leader>mp`) |
 | Icons | a Nerd Font | nvim-tree, nvim-web-devicons, which-key |
 

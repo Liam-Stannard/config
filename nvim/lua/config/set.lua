@@ -22,6 +22,7 @@ opt.ruler = true
 opt.visualbell = false
 opt.encoding = "utf-8"
 opt.mouse = "a" -- clickable tabs, breadcrumbs and file tree
+opt.clipboard = "unnamedplus" -- yank and paste use the system clipboard (wl-clipboard on Wayland, xclip on X11)
 opt.splitright = true -- new splits open to the right / below, like VS Code
 opt.splitbelow = true
 opt.breakindent = true -- wrapped lines keep their indent
